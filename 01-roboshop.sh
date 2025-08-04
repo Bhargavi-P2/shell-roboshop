@@ -8,10 +8,9 @@ DOMAIN_NAME="bhargavi.xyz"
 
 for instance in ${INSTANCES[@]}
 do
-    aws ec2 run-instances --image-id ami-09c813fb71547fc4f --instance-type t3.micro --security-group-ids sg-0cfc48d4773d3b8a6 
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name, Value=test}]" --query "Instances[0].InstanceID --output text
+    INSTANCE_ID=$(aws ec2 run-instances --image-id ami-09c813fb71547fc4f --instance-type t3.micro --security-group-ids sg-01bc7ebe005fb1cb2 --tag-specifications "ResourceType=instance,Tags=[{Key=Name, Value=$instance}]" --query "Instances[0].InstanceId" --output text) 
     if [ $instance != "frontend" ]
-    then 
+    then
     IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PrivateIpAddress" --output text)
     RECORD_NAME="$instance.$DOMAIN_NAME"
     else 
