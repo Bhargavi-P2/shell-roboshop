@@ -12,7 +12,7 @@ SCRIPT_DIR=$PWD
 mkdir -p $LOGS_FOLDER
 echo "Script started executing at: $(date)" | tee -a $LOG_FILE
 
-#check the user has root preveleges
+# check the user has root priveleges or not
 if [ $USERID -ne 0 ]
 then
     echo -e "$R ERROR:: Please run this script with root access $N" | tee -a $LOG_FILE
@@ -20,34 +20,36 @@ then
 else
     echo "You are running with root access" | tee -a $LOG_FILE
 fi
-#validate functions takes input as exit status, what command they tried to install
+
+# validate functions takes input as exit status, what command they tried to install
 VALIDATE(){
     if [ $1 -eq 0 ]
     then
-        echo -e "Installing $2 is ... $G SUCCESS $N" | tee -a $LOG_FILE
+        echo -e "$2 is ... $G SUCCESS $N" | tee -a $LOG_FILE
     else
-        echo -e "Installing $2 is ... $R FAILURE $N" | tee -a $LOG_FILE
+        echo -e "$2 is ... $R FAILURE $N" | tee -a $LOG_FILE
         exit 1
     fi
 }
+
 dnf module disable nginx -y &>>$LOG_FILE
-VALIDATE $? "Disable defalut Nginx"
+VALIDATE $? "Disabling Default Nginx"
 
 dnf module enable nginx:1.24 -y &>>$LOG_FILE
-VALIDATE $? "Enable Nginx:1.24"
+VALIDATE $? "Enabling Nginx:1.24"
 
 dnf install nginx -y &>>$LOG_FILE
 VALIDATE $? "Installing Nginx"
 
-systemctl enable nginx &>>$LOG_FILE
+systemctl enable nginx  &>>$LOG_FILE
 systemctl start nginx 
-VALIDATE $? "starting nginx"
+VALIDATE $? "Starting Nginx"
 
-rm -rf /usr/share/nginx/html/*  &>>$LOG_FILE
-VALIDATE $? "Removing default nginx content"
+rm -rf /usr/share/nginx/html/* &>>$LOG_FILE
+VALIDATE $? "Removing default content"
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
-VALIDATE $? "Dowloading frontend"
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
+VALIDATE $? "Downloading frontend"
 
 cd /usr/share/nginx/html 
 unzip /tmp/frontend.zip &>>$LOG_FILE
