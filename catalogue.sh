@@ -31,13 +31,13 @@ VALIDATE(){
         exit 1
     fi
 }
-dnf module disable nodejs -y &>>$LOGS_FOLDER
+dnf module disable nodejs -y &>>$LOG_FILE
 VALIDATE $? "Disable default node.js"
 
-dnf module enable nodejs:20 -y &>>$LOGS_FOLDER
+dnf module enable nodejs:20 -y &>>$LOG_FILE
 VALIDATE $? "Enable node.js"
 
-dnf install nodejs -y &>>$LOGS_FOLDER
+dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Install node.js"
 
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
@@ -53,19 +53,19 @@ cd /app
 unzip /tmp/catalogue.zip
 VALIDATE $? "un zipping catalogue"
 
-npm install &>>$LOGS_FOLDER
+npm install &>>$LOG_FILE
 VALIDATE $? "Installing dependencies"
 
 cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
 VALIDATE $? "Copying zcatalogue.service"
 
-systemctl daemon-reload &>>$LOGS_FOLDER
-systemctl enable catalogue &>>$LOGS_FOLDER
+systemctl daemon-reload &>>$LOG_FILE
+systemctl enable catalogue &>>$LOG_FILE
 systemctl start catalogue
 VALIDATE $? "Starting Catalogue"
 
 cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
-dnf install mongodb-mongosh -y &>>$LOGS_FOLDER
+dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "Installing Mongodb client
 
-mongosh --host mongodb.bhargavi.xyz </app/db/master-data.js &>>$LOGS_FOLDER
+mongosh --host mongodb.bhargavi.xyz </app/db/master-data.js 
