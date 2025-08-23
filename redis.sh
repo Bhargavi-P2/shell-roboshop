@@ -51,7 +51,8 @@ VALIDATE $? "Enabling Redis"
 systemctl start redis  &>>$LOG_FILE
 VALIDATE $? "Started Redis"
 
-END_TIME=$(date +%s)
+END_TIME=$(date +%s) ## date +%s → prints the current time in epoch format, END_TIME=$(...) → stores that value in the variable END_TIME
 TOTAL_TIME=$(( $END_TIME - $START_TIME ))
 
 echo -e "Script exection completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
+# It prints a success message with total execution time, shows it in color on the terminal, and appends it to the log file.
