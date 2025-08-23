@@ -6,12 +6,15 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 LOGS_FOLDER="/var/log/roboshop-logs"
-SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)  
+# $0-gives the script name that is being executed 
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 SCRIPT_DIR=$PWD
 
 mkdir -p $LOGS_FOLDER
-echo "Script started executing at: $(date)" | tee -a $LOG_FILE
+echo "Script started executing at: $(date)" | tee -a $LOG_FILE   #tee → Reads from stdin and writes to stdout and a file at the same time.
+#-a → Append mode, meaning it adds output to the file without overwriting existing content
+#In scripts, tee -a is often used for logging purposes → so output is shown on the terminal and saved to a log file, while keeping old logs intact.
 
 #check the user has root preveleges
 if [ $USERID -ne 0 ]
@@ -23,7 +26,7 @@ else
 fi
 #validate functions takes input as exit status, what command they tried to install
 VALIDATE(){
-    if [ $1 -eq 0 ]
+    if [ $1 -eq 0 ]  #$1 → the first argument, $2, $3, … → second, third, etc. arguments
     then
         echo -e "Installing $2 is ... $G SUCCESS $N" | tee -a $LOG_FILE
     else
@@ -32,7 +35,7 @@ VALIDATE(){
     fi
 }
 dnf module disable nodejs -y &>>$LOG_FILE
-VALIDATE $? "Disable default node.js"
+VALIDATE $? "Disable default node.js"   #$? → holds the exit status of the last executed command.
 
 dnf module enable nodejs:20 -y &>>$LOG_FILE
 VALIDATE $? "Enable node.js"
