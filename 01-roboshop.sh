@@ -16,7 +16,7 @@ do
     else 
     IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
         RECORD_NAME="$instance.$DOMAIN_NAME"
-    fi 
+    fi     ## The query is used to fetch Private IP for backend services and Public IP for frontend, then set the DNS record name for Route53 mapping
     echo "$instance IP address: $IP"    
 
     aws route53 change-resource-record-sets \
@@ -37,3 +37,6 @@ do
         }]
     }'
 done
+## When we launch an EC2 instance, it gets assigned an IP address (private or public). But IPs can change if the instance is stopped and started again. To avoid depending on changing IPs, we use Route53 DNS records.
+
+## The command creates or updates (“UPSERT”) an A record in Route53, mapping a domain name (like frontend.roboshop.internal) to the instance’s IP address.
